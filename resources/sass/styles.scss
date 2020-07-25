@@ -1,0 +1,15 @@
+@import '_fonts';
+@import '_variables';
+@import '_utilities';
+
+body {
+    font-family: $font-family-sans-serif;
+}
+
+.card-title {
+    font-size: 2rem;
+}
+
+.card-description {
+    font-size: 0.9rem;
+}

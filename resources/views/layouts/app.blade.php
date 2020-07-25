@@ -18,7 +18,7 @@
     <main>
         <div class="container mt-5">
             <div class="row">
-                <div class="col-md-4 mb-3">
+                <div class="col-md-4 mb-3 md-mb-5">
                     <p class="display-5">Dashboard </p>
                     <div class="card shadow-sm">
                         <div class="card-body d-flex align-items-center">

@@ -24,7 +24,7 @@
         <div class="col-md-9">
             <p class="display-5">{{ $calls_per_day['date'] }}</p>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 md-none">
             @if($loop->index == 0)
                 <div class="h-100 pb-2 d-flex justify-content-end align-items-end">
                     <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
@@ -140,12 +140,7 @@
                             <th>Rating</th>
                             <th>Duration</th>
                             <th>USD</th>
-                            <th>PHP</th>
-                            <th width="5%"></th>
                         </thead>
-                        <tbody>
-                            <tr></tr>
-                        </tbody>
                     </table>
                 </div>
                 <div style="height: 20rem" class="d-flex align-items-center justify-content-center">

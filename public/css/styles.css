@@ -301,6 +301,35 @@ a.btn-outline-secondary:hover {
   border-left: 6px solid #28a745 !important;
 }
 
+@media only screen and (max-width: 600px) {
+  .status span .description {
+    display: none;
+  }
+
+  .status span {
+    font-size: 1rem;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .status span p {
+    font-weight: bold;
+    margin-left: 3px;
+  }
+
+  .display-5 {
+    font-size: 1.8rem;
+  }
+
+  .md-none {
+    display: none !important;
+  }
+
+  .md-mb-5 {
+    margin-bottom: 5rem !important;
+  }
+}
+
 body {
   font-family: "Nunito";
 }

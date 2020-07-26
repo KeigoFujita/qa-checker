@@ -64,7 +64,7 @@ class TestController extends Controller
             return response("Can't load data from server", 400);
         }
         Session::flash('success', "Successfully loaded data from QA-World.");
-        return response('Success', 200);
+        return response('The data has been successfully loaded', 200);
     }
 
     private function formatDisplayDate($date)

@@ -165,9 +165,11 @@ class QAccount
                             "Account: " . $new_call['owner'] . ". Please check immediately.";
                         break;
                 }
-                Log::info('A message is send to' . $new_call['owner'] . "   | Message: $message");;
+                Log::info('A message is send to' . $new_call['owner'] . "   | Message: $message");
                 MessagingService::sendMessage($number, $message);
                 return;
+            } else {
+                Log::info('No message was sent.');
             }
         });
     }

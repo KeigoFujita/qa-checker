@@ -29,3 +29,4 @@ Route::get('calls', 'TestController@index')->name('calls.index');
 Route::post('calls', 'CallController@store')->name('calls.store');
 Route::put('calls', 'CallController@update')->name('calls.update');
 Route::delete('calls', 'CallController@destroy')->name('calls.destroy');
+Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');

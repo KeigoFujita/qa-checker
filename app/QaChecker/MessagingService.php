@@ -3,6 +3,7 @@
 namespace App\QaChecker;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class MessagingService
 {
@@ -10,7 +11,10 @@ class MessagingService
     {
         $api_code = env('ITEXTMO_API_CODE');
         $api_password = env('ITEXTMO_API_PASSWORD');
-        $this->itexmo($number, $message, $api_code, $api_password);
+
+        Log::info("A message was sent to $number and message of $message");
+        $response = $this->itexmo($number, $message, $api_code, $api_password);
+        Log::info("A message was sent with a response of $response");
     }
 
     function itexmo($number, $message, $apicode, $passwd)

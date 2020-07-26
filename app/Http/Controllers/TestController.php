@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\QaChecker\Facades\MessagingService;
 use App\QaChecker\Facades\QAccount;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use PHPHtmlParser\Dom;
@@ -68,7 +69,7 @@ class TestController extends Controller
         $json_calls = collect($calls)->toJson();
 
         Storage::disk('public')->put('calls.json', $json_calls);
-
+        Log::notice('Updated the calls');
         return $calls;
     }
 

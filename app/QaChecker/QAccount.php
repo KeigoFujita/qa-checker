@@ -141,8 +141,9 @@ class QAccount
         }
 
         $old_calls = json_decode(Storage::disk('public')->get('calls.json'));
+        $has_message_sent = false;
 
-        collect($old_calls)->each(function ($old_call) use ($updated_calls) {
+        collect($old_calls)->each(function ($old_call) use ($updated_calls, $has_message_sent) {
 
             $old_id = $old_call->call_id;
             $new_call = collect($updated_calls)->where('call_id', $old_id)->first();
@@ -167,10 +168,13 @@ class QAccount
                 }
                 Log::info('A message is send to' . $new_call['owner'] . "   | Message: $message");
                 MessagingService::sendMessage($number, $message);
+                $has_message_sent = true;
                 return;
-            } else {
-                Log::info('No message was sent.');
             }
         });
+
+        if (!$has_message_sent) {
+            Log::info('No message sent');
+        }
     }
 }

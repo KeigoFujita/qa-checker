@@ -15,11 +15,8 @@ class TestController extends Controller
     public function index()
     {
 
-        // MessagingService::sendMessage('09481403263', 'Matulog na kayo!!');
-        // die();
-
         if (!Storage::disk('public')->exists('calls.json')) {
-            return redirect(url('hard'));
+            $this->fetchDataFromAPI();
         }
 
         $json = Storage::disk('public')->get('calls.json');
@@ -54,11 +51,8 @@ class TestController extends Controller
 
     public function hardRefresh()
     {
-        $calls = QAccount::request();
-        $json_calls = collect($calls)->toJson();
 
-        Storage::disk('public')->put('calls.json', $json_calls);
-
+        $calls = $this->fetchDataFromAPI();
         if (empty($calls)) {
             Session::flash('error', "Can't pull data from QA-World server. Please try again");
             return response("Can't load data from server", 400);
@@ -66,6 +60,18 @@ class TestController extends Controller
         Session::flash('success', "Successfully loaded data from QA-World.");
         return response('The data has been successfully loaded', 200);
     }
+
+
+    private function fetchDataFromAPI()
+    {
+        $calls = QAccount::fetchData();
+        $json_calls = collect($calls)->toJson();
+
+        Storage::disk('public')->put('calls.json', $json_calls);
+
+        return $calls;
+    }
+
 
     private function formatDisplayDate($date)
     {

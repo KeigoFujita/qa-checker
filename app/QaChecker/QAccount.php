@@ -2,9 +2,11 @@
 
 namespace App\QaChecker;
 
+use App\QaChecker\Facades\MessagingService;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use PHPHtmlParser\Dom;
 
 class QAccount
@@ -37,13 +39,15 @@ class QAccount
 
     protected $APP_URL = 'https://app.qa-world.com/contractor_users/';
 
-    public function request()
+    public function fetchData()
     {
         $hope_response = $this->makeRequest($this->HOPE_COOKIE, $this->HOPE_ID, 'Hope');
         $keigo_response = $this->makeRequest($this->KEIGO_COOKIE, $this->KEIGO_ID, 'Keigo');
         $marisol_response = $this->makeRequest($this->MARISOL_COOKIE, $this->MARISOL_ID, 'Marisol');
 
         $response = array_merge($hope_response, $keigo_response, $marisol_response);
+        $this->notifyUsers($response);
+
         return $response;
     }
 
@@ -127,5 +131,44 @@ class QAccount
         $table_data->forget(0);
 
         return $table_data->toArray();
+    }
+
+
+    public function notifyUsers($updated_calls)
+    {
+        if (!Storage::disk('public')->exists('calls.json')) {
+            return;
+        }
+
+        $old_calls = json_decode(Storage::disk('public')->get('calls.json'));
+
+        collect($old_calls)->each(function ($old_call) use ($updated_calls) {
+
+            $old_id = $old_call->call_id;
+            $new_call = collect($updated_calls)->where('call_id', $old_id)->first();
+
+            if ($old_call->quality_rating == "N/A" && $new_call['quality_rating'] != "N/A") {
+
+                $number = "09481403263";
+                $message = "";
+
+                switch ($new_call['quality_rating']) {
+                    case '5':
+                    case '4':
+                    case '3':
+                        $message = "Transcription (" . $old_id . ") is now rated with a score of " . $new_call['quality_rating'] . ". " .
+                            "Total amount earned: Php." . convertToPeso($new_call['amount_earned']) . ".";
+                        break;
+
+                    default:
+                        $message = "Transcription (" . $old_id . ") got a failed rating of " . $new_call['quality_rating'] . ". " .
+                            "Account: " . $new_call['owner'] . ". Please check immediately.";
+                        break;
+                }
+                Log::info('A message is send to' . $new_call['owner'] . "   | Message: $message");;
+                MessagingService::sendMessage($number, $message);
+                return;
+            }
+        });
     }
 }

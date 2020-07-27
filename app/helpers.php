@@ -28,19 +28,19 @@ function formatDisplayDate($date)
 {
     $parsed_date = Carbon::parse($date);
 
-    return $parsed_date->isToday() ?  $parsed_date->format('F d, Y') . " (Today)" :  $parsed_date->format('F d, Y (l)');
+    return $parsed_date->setTimezone('GMT+8')->isToday() ?  $parsed_date->format('F d, Y') . " (Today)" :  $parsed_date->format('F d, Y (l)');
 }
 
 function getDaysInBetween($from = NULL, $to = NULL)
 {
-    $from = isset($from) ? $from  : Carbon::parse('last Monday');
+    $from = isset($from) ? $from  : now();
     $to = isset($to) ? $to  : now();
 
     $dates = collect([]);
 
-    for ($date = $to; $date->gt($from->copy()); $date->subDay()) {
+    for ($date = $from; $date->lte($to->copy()); $date->addDay()) {
         $dates->add($date->format('M d, Y'));
     }
 
-    return $dates;
+    return $dates->reverse();
 }

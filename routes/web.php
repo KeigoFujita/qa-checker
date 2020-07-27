@@ -18,7 +18,7 @@ Route::get('/', function () {
 });
 
 // Route::get('/test', 'TestController@index');
-Route::get('/hard', 'TestController@hardRefresh');
+Route::get('/hard', 'CallController@hardRefresh');
 
 Route::get('companies', 'CompanyController@index')->name('companies.index');
 Route::post('companies', 'CompanyController@store')->name('companies.store');

@@ -21,19 +21,12 @@
 @foreach($weekly_calls as $calls_per_day)
     {{-- Header --}}
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-6">
             <p class="display-5">{{ $calls_per_day['date'] }}</p>
         </div>
-        <div class="col-md-3 md-none">
+        <div class="col-md-6 md-none">
             @if($loop->index == 0)
-                <div class="h-100 pb-2 d-flex justify-content-end align-items-end">
-                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                        <a href="{{ route('calls.index') }}" type="button"
-                            class="btn btn-secondary btn-sm">Calls</a>
-                        <a href="{{ route('companies.index') }}" type="button"
-                            class="btn btn-outline-secondary btn-sm">Companies</a>
-                    </div>
-                </div>
+                @include('partials.tab-bar')
             @endif
         </div>
     </div>
@@ -118,7 +111,8 @@
 
                             <tr>
                                 <td>Summary</td>
-                                <td></td>
+                                <td>{{ number_format($calls_per_day['average_rating'],1) }}
+                                </td>
                                 <td></td>
                                 <td>${{ number_format($calls_per_day['sum'], 2, '.', '') }}
                                 </td>

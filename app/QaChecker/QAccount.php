@@ -3,6 +3,7 @@
 namespace App\QaChecker;
 
 use App\QaChecker\Facades\MessagingService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -29,110 +30,24 @@ class QAccount
         'If-None-Match' => 'W/"f7465fccbac0d13c88dcdbc4fbdd2018"',
     ];
 
-    protected $HOPE_COOKIE = "_platform_session=RUpvWHNDQnpCd0VEblNJaHBYQlpLMXJzRllMM0k4c2c3bkkvVXYxNW1rNXRmY2FScXhsM0xubGNWcTRFTEZOOE9yQzlrWnE3YWRHZm1FQlF6Mm0zdmdaU2IzTnd6SmEwRnFCbUg4RXRMRGpIWlpYRjdEVHpuaHB2VU9XZDJGRHFrMng1KzhUQkRlbmx2eDRvR2Y2N20zdG5vUnBRTVJXTEFMUEJqR1k4RWF0azNscDBnUmlENGRYZ0NrSktSVFdoU1ZPcHRKc0xSWHN3dU9nb1JWYU5SMWVtQ2hyeFFqSllOWklrVjNpc0UyMmdYdnRpaElmdjdOVUdNaTFMR0VXcDBkL21WSy8xVTRsYVZPUWpRcEUyVWhYTElGUlM5OHFMaUhveXFVRkk2T1lBSldHMzV4UXU4dXFxUnVuM05VdTYtLVhaUWErclB4dVdaZXFjZkFSbWtlY3c9PQ%3D%3D--b8ad8cef64eed5c6aa63daabefb90292e702c23b; _fbp=fb.0.1594814110871.329054244; mp_fc93b52301c5e7ec351390ced47e3982_mixpanel=%7B%22distinct_id%22%3A%20%22172b13016dd31c-0555eb3cd559f-f7d123e-144000-172b13016de241%22%2C%22%24device_id%22%3A%20%22172b13016dd31c-0555eb3cd559f-f7d123e-144000-172b13016de241%22%2C%22%24initial_referrer%22%3A%20%22https%3A%2F%2Fapp.qa-world.com%2F%22%2C%22%24initial_referring_domain%22%3A%20%22app.qa-world.com%22%7D";
-    protected $KEIGO_COOKIE = "fs_uid=rs.fullstory.com#96X73#6304226288877568:4649491844448256/1618060342; _fbp=fb.1.1595023631244.703286775; mp_fc93b52301c5e7ec351390ced47e3982_mixpanel=%7B%22distinct_id%22%3A%20%221714e74dd3025-0885d1c04098f2-f313f6d-144000-1714e74dd311bb%22%2C%22%24device_id%22%3A%20%221714e74dd3025-0885d1c04098f2-f313f6d-144000-1714e74dd311bb%22%2C%22%24initial_referrer%22%3A%20%22https%3A%2F%2Fapp.qa-world.com%2Fcontractor_users%2Fsign_in%22%2C%22%24initial_referring_domain%22%3A%20%22app.qa-world.com%22%7D; _platform_session=SGgzR2JUWjBPUWJrNy82NlZqaEVZbHFpTko2SE8waXQ3NEErWmJnbFJDK2hUU0VpM0lvaTVScXlHL0hSdWpjWFYyNW1PNWNnWDFOSi91Q0FWdXA5eHRKbXNTaVErdE8yUDZXaEtvOU9oZVBFREdBVHpYVkVHVndhWUU5czVjczdWTklwNnNweEQ1Y1ltL2d6Q3dUeFFhSXFqQUpWU3pGUDk5cFVCN3lSMzNteGF2bXpFT2wvTzBmellqbVVsdFIvRldwSWtGYVlXdXBOZC9WQnpnMUJpLytIdFhWcnFhdzlXN043RU80NUZpNlRIVDZ0WVlZY0R2QU9pMmoyaWtZeC0tc3ZHbm9tYW4zaW10NGJKS1hXMUFWZz09--73cdf1e35591831c90ad56a7d9645d26c4173660";
-    protected $MARISOL_COOKIE = "_platform_session=ZmE1UXkxMFZMdFl1QnlWSU40QjFrWjZhbkVPM3RMMnRQemwzS0czZUFHR0hEUCtGeFlqblY3elg5MkdNMXNhd05iS1dmeU0wUk1ydEhsc0p1YzMzOXR3QVdYK3FVMXhNci9TaUpJV25DTXM5UWFUWEhNVWZlallaY1E2Q2x0QnQ4RG03ZnExa2w3SEduSDNxTVBwUlJ1T0F3MTQrSTUrT1VFV0tpazlzanN2RVZtanNuWG5CNWRsLzRhYTlWZEdWdjZuOXdCMllwNnhLZmsvWXFwSG90VzZhV1JYWFpQOGZaeUx6eUhob3JydVBreldYSmxyZHNsaFFGcUxuandDY205YWl4SHZaMElMOUR5Umd1OVZrUTVPVmdKTWRHdHdzTXM4ZjhVMHVlb0xiYVJabWFOMWhCeEUyK01KMitYZ3MtLWtYRWttaFJUeWpWRTd6QVF0U010QUE9PQ%3D%3D--7a18e6b1977ff80e421ae52d5fd1013299c68b27; _fbp=fb.0.1595589927539.1480946981; mp_fc93b52301c5e7ec351390ced47e3982_mixpanel=%7B%22distinct_id%22%3A%20%221736726911e40b-0d704033bc2d49-4353760-144000-1736726911f7cf%22%2C%22%24device_id%22%3A%20%221736726911e40b-0d704033bc2d49-4353760-144000-1736726911f7cf%22%2C%22%24initial_referrer%22%3A%20%22https%3A%2F%2Fapp.qa-world.com%2Fcontractor_users%2Fsign_in%22%2C%22%24initial_referring_domain%22%3A%20%22app.qa-world.com%22%7D";
+    protected $QA_WORLD_ACCOUNT_INFO_URL = 'https://app.qa-world.com/contractor_users/';
 
-    protected $HOPE_ID = 230308;
-    protected $KEIGO_ID = 125314;
-    protected $MARISOL_ID = 176608;
+    protected $dom = null;
+    protected $row_headers = ['owner', 'rated', 'completion_date', 'audio_minutes', 'amount_earned', 'quality_rating', 'call_id', 'passing_transcript_example', 'quality_rating_date', 'transcript_flags', 'quality_rating_reason', 'quality_rating_notes'];
 
-    protected $APP_URL = 'https://app.qa-world.com/contractor_users/';
 
-    public function fetchData()
+    private $selected_calls = null;
+    private $from = null;
+    private $to = null;
+
+
+    public function __construct()
     {
-        $hope_response = $this->makeRequest($this->HOPE_COOKIE, $this->HOPE_ID, 'Hope');
-        $keigo_response = $this->makeRequest($this->KEIGO_COOKIE, $this->KEIGO_ID, 'Keigo');
-        $marisol_response = $this->makeRequest($this->MARISOL_COOKIE, $this->MARISOL_ID, 'Marisol');
-
-        $response = array_merge($hope_response, $keigo_response, $marisol_response);
-        $this->notifyUsers($response);
-
-        return $response;
+        $this->dom = new Dom;
+        $this->selected_calls = collect([]);
+        $this->from = Carbon::parse('this week Monday', 'GMT+8');
+        $this->to = Carbon::parse('this week Sunday', 'GMT+8');
     }
-
-
-    private function makeRequest($cookie, $id, $owner)
-    {
-        try {
-            $this->headers['Cookie'] = $cookie;
-            $url = $this->APP_URL . $id;
-            $response = Http::withHeaders($this->headers)->get($url);
-            $response_text = $response->body();
-            return $this->parseResponse($response_text, $owner);
-        } catch (Exception $e) {
-            Log::error($e);
-            return [];
-        }
-    }
-
-
-    private function parseResponse($response, $owner)
-    {
-        $dom = new Dom();
-        $dom->loadStr($response);
-        $table = $dom->find('table')[0];
-        $rows = $table->find('tr');
-
-        $table_data = collect([]);
-
-        $rows->each(function ($row) use ($table_data, $owner) {
-
-            $row_information = [];
-
-            $data_per_row = $row->find('td');
-
-            $count = count($data_per_row);
-            $isRated = true;
-
-            for ($i = 0; $i < $count; $i++) {
-
-                $row_information['owner'] = $owner;
-                $data = $data_per_row[$i];
-
-
-                switch ($i) {
-                    case 0:
-                        $row_information['completion_date'] = $data->text;
-                        break;
-
-                    case 1:
-                        $row_information['audio_minutes'] = $data->text;
-                        break;
-                    case 2:
-                        if ($data->text == "NOT YET RATED") {
-                            $row_information['amount_earned'] = 0;
-                            $isRated = false;
-                        } else {
-                            $amount_earned = floatval(ltrim($data->text, '$'));
-                            $row_information['amount_earned'] = $amount_earned;
-                        }
-                        break;
-                    case 3:
-
-                        if (!$isRated) {
-                            $row_information['quality_rating'] = "N/A";
-                        } else {
-                            $row_information['quality_rating'] = $data->text;
-                        }
-                        break;
-                    case 4:
-                        $row_information['call_id'] = $data->find('a')[0]->text;
-                        break;
-                    case 6:
-                        $row_information['quality_rating_date'] = $data->text;
-                        break;
-                }
-            }
-
-            $table_data->push($row_information);
-        });
-
-        $table_data->forget(0);
-
-        return $table_data->toArray();
-    }
-
 
     public function notifyUsers($updated_calls)
     {
@@ -176,5 +91,232 @@ class QAccount
         if (!$has_message_sent) {
             Log::info('No message sent');
         }
+    }
+
+    public function getCallsThisWeek($owner = null)
+    {
+        $this->selected_calls = $this->getCallsInWeek($owner);
+        return $this;
+    }
+
+    public function getCallsFromLastWeek($owner = null)
+    {
+        $this->selected_calls = $this->getCallsInWeek(1, $owner);
+        return $this;
+    }
+
+    public function getCallsFromWeekAgo($week, $owner = null)
+    {
+        $this->selected_calls = $this->getCallsInWeek($week, $owner);
+        return $this;
+    }
+
+    public function getCallsInWeek($week = 0, $owner = null)
+    {
+
+
+        if ($week > 0) {
+            $this->from = $this->from->subWeeks($week);
+            $this->to = $this->to->subWeeks($week);
+        }
+
+        $from = $this->from->format('M d, Y');
+        $to = $this->to->format('M d, Y');
+
+        $calls = collect([]);
+        $all_calls = collect($this->getAllCalls());
+
+        $calls = $all_calls->whereBetween('completion_date', [$from, $to]);
+        $calls = $owner ? $calls->where('owner', $owner) : $calls;
+        return $calls;
+    }
+
+    public function toRaw()
+    {
+        return $this->selected_calls;
+    }
+
+    public function getCallsBetween($start, $end)
+    {
+    }
+
+
+    public function getAllCalls()
+    {
+        $calls_exists = Storage::disk('public')->exists('calls.json');
+        if (!$calls_exists)  $this->reload();
+
+        $calls = Storage::disk('public')->get('calls.json');
+        return json_decode($calls);
+    }
+
+
+    /**
+     *  reload data from QA World
+     *
+     * @return 
+     */
+
+    public function reload()
+    {
+        $accounts = $this->fetchAccounts();
+        $calls = collect([]);
+        $accounts->each(function ($account) use ($calls) {
+            $account_calls = $this->fetchAccountCalls($account);
+            $calls->push($account_calls);
+        });
+
+        $calls_json = $calls->flatten(1)->toJson();
+        Storage::disk('public')->put('calls.json', $calls_json);
+
+        Log::info('calls.json has been updated');
+
+        return !empty($this->getAllCalls());
+    }
+
+    private function fetchAccounts()
+    {
+        $exists = Storage::disk('root')->exists('accounts.json');
+        $accounts_json = $exists ? Storage::disk('root')->get('accounts.json') : null;
+        return $accounts_json ?  collect(json_decode($accounts_json)) : collect([]);
+    }
+
+    private function fetchAccountCalls($account)
+    {
+        $response = $this->makeRequest($account);
+        $account_information = $this->parseResponse($response, $account->account_name);
+        return $account_information->flatten(1);
+    }
+
+    private function makeRequest($account)
+    {
+        try {
+            $this->headers['Cookie'] = $account->account_cookie;
+            $url = $this->QA_WORLD_ACCOUNT_INFO_URL . $account->account_id;
+            $response_text = Http::withHeaders($this->headers)->get($url)->body();
+            return $response_text;
+        } catch (Exception $e) {
+            Log::error($e);
+            Log::error("Can't make request to the QA Website");
+            return "";
+        }
+    }
+
+    private function parseResponse($response, $owner)
+    {
+        $parser = $this->dom;
+        $parser->loadStr($response);
+        $tables = $parser->find('table');
+
+        $account_calls = collect([]);
+        $tables->each(function ($table) use ($account_calls, $owner) {
+            $table_information = $this->getTableData($table, $owner);
+            $account_calls->push($table_information);
+        });
+        return $account_calls;
+    }
+
+    private function getTableData($table, $owner = "")
+    {
+        $rows = $table->find('tr');
+        $table_information = collect([]);
+        $index = -1;
+
+        foreach ($rows as $row) {
+            $index++;
+            if ($index == 0) continue;
+            $row_information = $this->getRowData($row, $owner);
+            $table_information->push($row_information);
+        }
+
+        return $table_information->toArray();
+    }
+
+    private function getRowData($row, $owner = "")
+    {
+
+        $row_headers = collect($this->row_headers);
+        $isRated = true;
+
+        $row_information = collect([$owner, $isRated]);
+        $tds = $row->find('td');
+        $index = 1;
+
+
+        foreach ($tds as $td) {
+
+            $td_text = "";
+
+            switch ($index) {
+                case 3:
+                    $isRated = $td->text != "NOT YET RATED";
+                    $td_text = $isRated  ?  floatval(ltrim($td->text, '$')) : 0;
+                    break;
+                case 4:
+                    $td_text = $isRated ?  floatval($td->text) : 0;
+                    break;
+                case 5:
+                    $td_text = $td->find('a')[0]->text;
+                    break;
+                default:
+                    $td_text = $td->text;
+                    break;
+            }
+
+            $row_information->push($td_text);
+            $index++;
+        }
+
+        $row_information[1] = $isRated;
+
+        return $this->map_headers_to_values($row_headers, $row_information);
+    }
+
+    private function map_headers_to_values($row_headers, $row_information)
+    {
+        $row = collect([]);
+        for ($i = 0; $i < $row_headers->count(); $i++) {
+            $row_header = $row_headers->get($i);
+            $row_data = $row_information->get($i);
+            $row->put($row_header, $row_data);
+        }
+        return $row;
+    }
+
+
+    public function toView()
+    {
+
+        $calls = $this->selected_calls;
+
+        $to = $this->to->eq(Carbon::parse('this week Sunday', 'GMT+8')) ? now('GMT+8') : $this->to;
+
+        $dates = getDaysInBetween($this->from, $to);
+
+        $parsed_calls = $dates->map(function ($date) use ($calls) {
+            $calls_in_day = $calls->where('completion_date', $date)->sortByDesc('quality_rating');
+            $sum = $calls_in_day->sum('amount_earned');
+            $num_calls = $calls_in_day->where('quality_rating', '>=', 3)->count();
+            $failed_rating = $calls_in_day->whereIn('quality_rating', [1, 2])->count();
+            $unrated_calls = $calls_in_day->where('quality_rating', 'N/A')->count();
+            $average_rating = $calls_in_day->average('quality_rating');
+
+            return [
+                'date' => formatDisplayDate($date),
+                'calls' => $calls_in_day,
+                'sum' => $sum,
+                'num_calls' => $num_calls,
+                'failed_rating' => $failed_rating,
+                'unrated_calls' => $unrated_calls,
+                'average_rating' => $average_rating
+            ];
+        });
+
+        $sum = $calls->sum('amount_earned');
+
+        return [
+            'calls' => $parsed_calls,
+            'sum' => $sum
+        ];
     }
 }

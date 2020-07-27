@@ -25,7 +25,7 @@ Route::post('companies', 'CompanyController@store')->name('companies.store');
 Route::put('companies', 'CompanyController@update')->name('companies.update');
 Route::delete('companies', 'CompanyController@destroy')->name('companies.destroy');
 
-Route::get('calls', 'TestController@index')->name('calls.index');
+Route::get('calls', 'CallController@index')->name('calls.index');
 Route::post('calls', 'CallController@store')->name('calls.store');
 Route::put('calls', 'CallController@update')->name('calls.update');
 Route::delete('calls', 'CallController@destroy')->name('calls.destroy');

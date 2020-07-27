@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 
 function padZero($num, $len)
 {
@@ -21,4 +22,25 @@ function formatTimestamp($seconds)
 function convertToPeso($dollar)
 {
     return number_format($dollar * 48.0, 2);
+}
+
+function formatDisplayDate($date)
+{
+    $parsed_date = Carbon::parse($date);
+
+    return $parsed_date->isToday() ?  $parsed_date->format('F d, Y') . " (Today)" :  $parsed_date->format('F d, Y (l)');
+}
+
+function getDaysInBetween($from = NULL, $to = NULL)
+{
+    $from = isset($from) ? $from  : Carbon::parse('last Monday');
+    $to = isset($to) ? $to  : now();
+
+    $dates = collect([]);
+
+    for ($date = $to; $date->gt($from->copy()); $date->subDay()) {
+        $dates->add($date->format('M d, Y'));
+    }
+
+    return $dates;
 }

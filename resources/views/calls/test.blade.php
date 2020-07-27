@@ -21,10 +21,10 @@
 @foreach($weekly_calls as $calls_per_day)
     {{-- Header --}}
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <p class="display-5">{{ $calls_per_day['date'] }}</p>
         </div>
-        <div class="col-md-6 md-none">
+        <div class="col-md-4 md-none">
             @if($loop->index == 0)
                 @include('partials.tab-bar')
             @endif

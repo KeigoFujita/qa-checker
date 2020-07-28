@@ -34,12 +34,9 @@
                         <tbody>
 
                             @foreach($calls_per_day['calls'] as $call)
-                                <tr>
-                                    <td @if($call->
-                                        quality_rating =='N/A' ) class="left-border-warning" @elseif($call->
-                                        quality_rating < 3) class="left-border-danger" @else class="left-border-success"
-                                            @endif>
-                                            {{ $call->call_id }}
+                                <tr class="@include('calls.etc.row-left-border',['rating'=>$call->quality_rating])">
+                                    <td>
+                                        {{ $call->call_id }}
                                     </td>
                                     <td>
                                         {{ $call->quality_rating }}

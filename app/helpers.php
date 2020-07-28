@@ -44,3 +44,8 @@ function getDaysInBetween($from = NULL, $to = NULL)
 
     return $dates->reverse();
 }
+
+function to_money_format($amount)
+{
+    return number_format($amount, 2, '.', '');
+}

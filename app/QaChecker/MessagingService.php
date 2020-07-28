@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 
 class MessagingService
 {
-    public function sendMessage($number, $message)
+    public function sendMessage($number = '09481403263', $message)
     {
         $api_code = env('ITEXTMO_API_CODE');
         $api_password = env('ITEXTMO_API_PASSWORD');

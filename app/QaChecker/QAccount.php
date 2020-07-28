@@ -186,7 +186,7 @@ class QAccount
         $rating = $call->quality_rating;
         $amount_earned = convertToPeso($call->amount_earned);
 
-        $number = "09126126901";
+        $number = env('ITEXTMO_TO_NUMBER');
         $message = "";
 
         switch ($rating) {

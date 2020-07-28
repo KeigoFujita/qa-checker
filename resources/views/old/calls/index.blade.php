@@ -1,5 +1,18 @@
-@extends('layouts.app',['sum'=>$sum])
+@extends('layouts.app')
+
 @section('content')
+
+
+@if($errors->any())
+    @foreach($errors->all() as $error)
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ $error }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endforeach
+@endif
 
 @if(Session::has('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -18,52 +31,53 @@
     </div>
 @endif
 
-@foreach($weekly_calls as $calls_per_day)
+@forelse($calls as $date => $items)
+
     {{-- Header --}}
-    <div class="row md-row-reverse">
-        <div class="col-md-8">
-            <p class="display-5">{{ $calls_per_day['date'] }}</p>
+    <div class="row">
+        <div class="col-md-9">
+            <p class="display-5">{{ $date }}</p>
         </div>
-        <div class="col-md-4 mb-3">
+        <div class="col-md-3">
             @if($loop->index == 0)
-                @include('partials.tab-bar')
+                <div class="h-100 pb-2 d-flex justify-content-end align-items-end">
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <a href="{{ route('calls.index') }}" type="button"
+                            class="btn btn-secondary btn-sm">Calls</a>
+                        <a href="{{ route('companies.index') }}" type="button"
+                            class="btn btn-outline-secondary btn-sm">Companies</a>
+                    </div>
+                </div>
             @endif
         </div>
     </div>
 
+
     {{-- Table --}}
     <div class="card mb-5">
 
-        @if(count($calls_per_day['calls']) > 0)
+        @if($items['calls']->count() > 0)
             @include('partials.calls-table-card-header')
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="card-table table table-hover mt-0 table-striped calls">
                         <thead>
-                            <th width="30%">ID</th>
+                            <th width="30%">Company</th>
                             <th>Rating</th>
                             <th>Duration</th>
                             <th>USD</th>
-                            <th>Owner</th>
+                            <th>PHP</th>
                             <th width="5%"></th>
                         </thead>
                         <tbody>
 
-                            @foreach($calls_per_day['calls'] as $call)
+                            @foreach($items['calls'] as $call)
                                 <tr>
-                                    <td @if($call->
-                                        quality_rating =='N/A' ) class="left-border-warning" @elseif($call->
-                                        quality_rating < 3) class="left-border-danger" @else class="left-border-success"
-                                            @endif>
-                                            {{ $call->call_id }}
-                                    </td>
-                                    <td>
-                                        {{ $call->quality_rating }}
-                                    </td>
-                                    <td>{{ $call->audio_minutes }}</td>
-                                    <td>${{ number_format($call->amount_earned, 2, '.', '') }}
-                                    </td>
-                                    <td>{{ $call->owner }}</td>
+                                    <td>{{ $call->company->name }}</td>
+                                    <td>{{ $call->rating }}</td>
+                                    <td>{{ $call->display_duration() }}</td>
+                                    <td>${{ $call->amount_earned }}</td>
+                                    <td>₱{{ $call->display_amount_earned_in_peso() }}</td>
                                     <td>
                                         <div class="dropleft">
                                             <a data-toggle="dropdown" class="cursor-pointer text-secondary">
@@ -75,9 +89,11 @@
                                                 </svg>
                                             </a>
                                             <div class="dropdown-menu py-1">
-                                                <a data-toggle="modal" data-target="#editCallModal" data-id=""
-                                                    data-rating="" data-amount-earned="" data-duration=""
-                                                    data-company-id="">
+                                                <a data-toggle="modal" data-target="#editCallModal"
+                                                    data-id="{{ $call->id }}" data-rating="{{ $call->rating }}"
+                                                    data-amount-earned="{{ $call->amount_earned }}"
+                                                    data-duration="{{ $call->duration }}"
+                                                    data-company-id="{{ $call->company->id }}">
                                                     <div class="d-flex align-items-center px-3 py-2 menu-item">
                                                         <svg width="1em" height="1em" viewBox="0 0 16 16"
                                                             class="bi bi-pencil mr-3" fill="currentColor"
@@ -111,15 +127,17 @@
 
                             <tr>
                                 <td>Summary</td>
-                                <td>{{ number_format($calls_per_day['average_rating'],1) }}
+                                <td>{{ $items['summary']['rating'] }}
                                 </td>
-                                <td></td>
-                                <td>${{ number_format($calls_per_day['sum'], 2, '.', '') }}
+                                <td>{{ $items['summary']['total_duration'] }}
                                 </td>
-                                <td>₱{{ number_format(convertToPeso($calls_per_day['sum']), 2, '.', '') }}
+                                <td>${{ $items['summary']['total_amount_earned'] }}
+                                </td>
+                                <td>₱{{ $items['summary']['total_amount_earned_in_peso'] }}
                                 </td>
                                 <td></td>
                             </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -134,7 +152,12 @@
                             <th>Rating</th>
                             <th>Duration</th>
                             <th>USD</th>
+                            <th>PHP</th>
+                            <th width="5%"></th>
                         </thead>
+                        <tbody>
+                            <tr></tr>
+                        </tbody>
                     </table>
                 </div>
                 <div style="height: 20rem" class="d-flex align-items-center justify-content-center">
@@ -144,5 +167,52 @@
         @endif
     </div>
 
-@endforeach
+@empty
+
+    <div class="row">
+        <div class="col-md-9">
+            <p class="display-5">Calls</p>
+        </div>
+        <div class="col-md-3">
+
+            <div class="h-100 pb-2 d-flex justify-content-end align-items-end">
+                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                    <a href="{{ route('calls.index') }}" type="button"
+                        class="btn btn-secondary btn-sm">Calls</a>
+                    <a href="{{ route('companies.index') }}" type="button"
+                        class="btn btn-outline-secondary btn-sm">Companies</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-5">
+        <div class="card-header">
+            <div class="d-flex justify-content-end align-items-center h-1 cursor-pointer">
+                <a data-toggle="modal" data-target="#createModal">
+                    <svg width="1.2rem" height="1.2rem" viewBox="0 0 16 16" class="bi bi-plus-square"
+                        fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z" />
+                        <path fill-rule="evenodd"
+                            d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z" />
+                        <path fill-rule="evenodd"
+                            d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div style="height: 20rem" class="d-flex align-items-center justify-content-center">
+                <p class="mb-0">No calls recorded</p>
+            </div>
+        </div>
+    </div>
+
+@endforelse
+
+@endsection
+
+@section('modal')
+{{-- @include('calls.modals.create')
+@include('calls.modals.edit') --}}
 @endsection

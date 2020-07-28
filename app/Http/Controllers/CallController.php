@@ -35,7 +35,7 @@ class CallController extends Controller
             $selected = "This week";
         }
 
-        return view('calls.test')
+        return view('calls.index')
             ->with('weekly_calls', $data['calls'])
             ->with('sum', $data['sum'])
             ->with('selected', $selected);

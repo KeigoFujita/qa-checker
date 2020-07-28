@@ -10,7 +10,7 @@
                     d="M12.146 6.354l-2.5-2.5.708-.708 2.5 2.5-.707.708zM3 10v.5a.5.5 0 0 0 .5.5H4v.5a.5.5 0 0 0 .5.5H5v.5a.5.5 0 0 0 .5.5H6v-1.5a.5.5 0 0 0-.5-.5H5v-.5a.5.5 0 0 0-.5-.5H3z" />
             </svg>
             <p class="mb-0" style="font-size: 0.8rem; line-height: 0.8rem;">
-                Edit</p>
+                View Info</p>
         </div>
     </a>
     <div class="d-flex align-items-center px-3 py-2 border-top menu-item">

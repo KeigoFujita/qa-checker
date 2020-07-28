@@ -13,32 +13,19 @@ class CallController extends Controller
 {
     public function index(Request $request)
     {
-
-        $week = $request->week;
-
-        if ($week) {
-            $data =  QAccount::getCallsFromWeekAgo($week)->toView();
-
-            switch ($week) {
-                case 0:
-                    $selected = "This week";
-                    break;
-                case 1:
-                    $selected = "Last week";
-                    break;
-                default:
-                    $selected = "$week weeks ago";
-                    break;
-            }
-        } else {
-            $data =  QAccount::getCallsThisWeek()->toView();
-            $selected = "This week";
-        }
+        $accounts = QAccount::fetchAccounts();
+        $week_ago = $request->week_ago ? $request->week_ago : 0;
+        $account_id = $request->account_id ? $request->account_id : 0;
+        $account = $accounts->where('account_id', $account_id)->first();
+        $account_name =  $account ? $account->account_name : null;
+        $data =  QAccount::getCallsFromWeekAgo($week_ago, $account_name)->toView();
 
         return view('calls.index')
             ->with('weekly_calls', $data['calls'])
             ->with('sum', $data['sum'])
-            ->with('selected', $selected);
+            ->with('week_ago', $week_ago)
+            ->with('account_id', $account_id)
+            ->with('accounts', $accounts);
     }
 
     public function hardRefresh()

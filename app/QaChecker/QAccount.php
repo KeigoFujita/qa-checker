@@ -201,7 +201,7 @@ class QAccount
         MessagingService::sendMessage($number, $message);
     }
 
-    private function fetchAccounts()
+    public function fetchAccounts()
     {
         $exists = Storage::disk('root')->exists('accounts.json');
         $accounts_json = $exists ? Storage::disk('root')->get('accounts.json') : null;

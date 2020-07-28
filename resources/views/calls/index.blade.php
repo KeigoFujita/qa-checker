@@ -2,19 +2,10 @@
 @section('content')
 
 @include('components.alerts')
+@include('partials.tab-bar')
 @foreach($weekly_calls as $calls_per_day)
     {{-- Header --}}
-    <div class="row md-row-reverse">
-        <div class="col-md-8">
-            <p class="display-5">{{ $calls_per_day['date'] }}</p>
-        </div>
-        <div class="col-md-4 mb-3">
-            @if($loop->index == 0)
-                @include('partials.tab-bar')
-            @endif
-        </div>
-    </div>
-
+    <p class="display-5">{{ $calls_per_day['date'] }}</p>
     {{-- Table --}}
     <div class="card mb-5">
 
@@ -24,7 +15,7 @@
                 <div class="table-responsive">
                     <table class="card-table table table-hover mt-0 calls">
                         <thead>
-                            <th width="30%">ID</th>
+                            <th width="30%">Call ID</th>
                             <th>Rating</th>
                             <th>Duration</th>
                             <th>USD</th>

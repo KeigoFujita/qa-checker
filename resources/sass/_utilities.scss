@@ -222,7 +222,23 @@ $value in $theme-colors {
         display: none !important
     }
 
+    .md-block {
+        display: block !important;
+    }
+
+    .md-row-reverse {
+        flex-direction: column-reverse !important
+    }
+
     .md-mb-5 {
         margin-bottom: 5rem !important;
+    }
+
+    .md-mb-4 {
+        margin-bottom: 4rem !important;
+    }
+
+    .md-justify-content-start {
+        justify-content: flex-start !important;
     }
 }

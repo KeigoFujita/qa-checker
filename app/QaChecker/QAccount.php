@@ -40,6 +40,8 @@ class QAccount
     private $from = null;
     private $to = null;
 
+    private $recently_rated_calls = null;
+    private $sendNotifications = false;
 
     public function __construct()
     {
@@ -47,50 +49,8 @@ class QAccount
         $this->selected_calls = collect([]);
         $this->from = Carbon::parse('this week Monday', 'GMT+8');
         $this->to = Carbon::parse('this week Sunday', 'GMT+8');
-    }
 
-    public function notifyUsers($updated_calls)
-    {
-        if (!Storage::disk('public')->exists('calls.json')) {
-            return;
-        }
-
-        $old_calls = json_decode(Storage::disk('public')->get('calls.json'));
-        $has_message_sent = false;
-
-        collect($old_calls)->each(function ($old_call) use ($updated_calls, $has_message_sent) {
-
-            $old_id = $old_call->call_id;
-            $new_call = collect($updated_calls)->where('call_id', $old_id)->first();
-
-            if ($old_call->quality_rating == "N/A" && $new_call['quality_rating'] != "N/A") {
-
-                $number = "09481403263";
-                $message = "";
-
-                switch ($new_call['quality_rating']) {
-                    case '5':
-                    case '4':
-                    case '3':
-                        $message = "Transcription (" . $old_id . ") is now rated with a score of " . $new_call['quality_rating'] . ". " .
-                            "Total amount earned: Php." . convertToPeso($new_call['amount_earned']) . ".";
-                        break;
-
-                    default:
-                        $message = "Transcription (" . $old_id . ") got a failed rating of " . $new_call['quality_rating'] . ". " .
-                            "Account: " . $new_call['owner'] . ". Please check immediately.";
-                        break;
-                }
-                Log::info('A message is send to' . $new_call['owner'] . "   | Message: $message");
-                MessagingService::sendMessage($number, $message);
-                $has_message_sent = true;
-                return;
-            }
-        });
-
-        if (!$has_message_sent) {
-            Log::info('No message sent');
-        }
+        $this->recently_rated_calls = collect([]);
     }
 
     public function getCallsThisWeek($owner = null)
@@ -151,6 +111,16 @@ class QAccount
     }
 
 
+    public function getDummyCalls()
+    {
+        $calls_exists = Storage::disk('public')->exists('dummy_calls.json');
+        if (!$calls_exists)  $this->reload();
+
+        $calls = Storage::disk('public')->get('dummy_calls.json');
+        return json_decode($calls, true);
+    }
+
+
     /**
      *  reload data from QA World
      *
@@ -160,18 +130,75 @@ class QAccount
     public function reload()
     {
         $accounts = $this->fetchAccounts();
-        $calls = collect([]);
-        $accounts->each(function ($account) use ($calls) {
+        $calls_updated = collect([]);
+        $accounts->each(function ($account) use ($calls_updated) {
             $account_calls = $this->fetchAccountCalls($account);
-            $calls->push($account_calls);
+            $calls_updated->push($account_calls);
         });
+        $calls_updated = $calls_updated->flatten(1);
 
-        $calls_json = $calls->flatten(1)->toJson();
-        Storage::disk('public')->put('calls.json', $calls_json);
+        if ($this->sendNotifications) $this->checkAllRatedCalls($calls_updated);
+
+        $calls_updated_json = $calls_updated->toJson();
+
+        Storage::disk('public')->put('calls.json', $calls_updated_json);
 
         Log::info('calls.json has been updated');
 
         return !empty($this->getAllCalls());
+    }
+
+    public function reloadWithNotifations()
+    {
+        $this->sendNotifications = true;
+        return $this->reload();
+    }
+
+    private function checkAllRatedCalls($updated_calls)
+    {
+        $old_calls = collect($this->getAllCalls());
+        $old_calls->each(function ($call) use ($updated_calls) {
+            $call_id = $call->call_id;
+            $updated_call = $updated_calls->where('call_id', $call_id)->first();
+            if (
+                !empty($updated_call)
+                && $call->call_id == $updated_call['call_id']
+                && $updated_call['rated'] == true
+                && $call->rated == false
+            ) {
+                $this->recently_rated_calls->push((object)$updated_call);
+            }
+        });
+
+        $this->dispatchNotifications();
+    }
+
+    private function dispatchNotifications()
+    {
+        $this->recently_rated_calls->each(function ($call) {
+            $this->notify($call);
+        });
+    }
+
+    private function notify($call)
+    {
+        $call_id = $call->call_id;
+        $rating = $call->quality_rating;
+        $amount_earned = convertToPeso($call->amount_earned);
+
+        $number = "09126126901";
+        $message = "";
+
+        switch ($rating) {
+            case 1:
+            case 2:
+                $message = "Alert (Failed Rating)! Transcription ($call_id) got a failed rating of $rating. Please check immediately";
+                break;
+            default:
+                $message = "Congrats! Transcription ($call_id) is now rated with a score of $rating. Amount earned : Php. $amount_earned";
+                break;
+        }
+        MessagingService::sendMessage($number, $message);
     }
 
     private function fetchAccounts()
@@ -184,8 +211,8 @@ class QAccount
     private function fetchAccountCalls($account)
     {
         $response = $this->makeRequest($account);
-        $account_information = $this->parseResponse($response, $account->account_name);
-        return $account_information->flatten(1);
+        $account_information = $this->parseResponse($response, $account->account_name)->flatten(1);
+        return $account_information;
     }
 
     private function makeRequest($account)

@@ -44,8 +44,7 @@ class CallController extends Controller
     public function hardRefresh()
     {
 
-        $success = QAccount::reload();
-
+        $success = QAccount::reloadWithNotifations();
         if (!$success) {
             Session::flash('error', "Can't pull data from QA-World server. Please try again");
             return response("Can't load data from server", 400);

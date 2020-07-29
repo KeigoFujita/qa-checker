@@ -107,7 +107,9 @@ class QAccount
     public function getAllCalls()
     {
         $calls_exists = Storage::disk('public')->exists('calls.json');
-        if (!$calls_exists)  $this->reload();
+        if (!$calls_exists) {
+            $calls = Storage::disk('public')->put('calls.json', json_encode([]));
+        };
 
         $calls = Storage::disk('public')->get('calls.json');
         return json_decode($calls);
@@ -217,7 +219,6 @@ class QAccount
         } catch (Exception $e) {
             Log::error($e);
             Log::error("Can't make request to the QA Website");
-            Session::flash('error', "Can't make request to the QA Website");
             return "";
         }
     }

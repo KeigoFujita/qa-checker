@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Nunito:200,600);input[type=range] {
+@import url(https://fonts.googleapis.com/css?family=Nunito:200);input[type=range] {
   cursor: pointer;
 }
 
@@ -380,6 +380,10 @@ a.btn-outline-secondary:hover {
   .md-w-5 {
     width: 5rem;
   }
+}
+
+.input-group-text {
+  border: 1px solid #6c757d;
 }
 
 body {

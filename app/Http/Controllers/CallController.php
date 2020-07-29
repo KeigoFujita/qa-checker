@@ -19,9 +19,8 @@ class CallController extends Controller
         $account = $accounts->where('account_id', $account_id)->first();
         $account_name =  $account ? $account->account_name : null;
         $data =  QAccount::getCallsFromWeekAgo($week_ago, $account_name)->toView();
-
         return view('calls.index')
-            ->with('weekly_calls', $data['calls'])
+            ->with('weekly_calls', (object)$data['calls'])
             ->with('sum', $data['sum'])
             ->with('week_ago', $week_ago)
             ->with('account_id', $account_id)

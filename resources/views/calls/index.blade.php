@@ -31,12 +31,12 @@
     </div>
 @endif
 
-@forelse($calls as $date => $items)
+@forelse($weekly_calls as $calls_per_day)
 
     {{-- Header --}}
     <div class="row">
         <div class="col-md-9">
-            <p class="display-5">{{ $date }}</p>
+            <p class="display-5">{{ $calls_per_day->date }}</p>
         </div>
         <div class="col-md-3">
             @if($loop->index == 0)
@@ -56,7 +56,7 @@
     {{-- Table --}}
     <div class="card mb-5">
 
-        @if($items['calls']->count() > 0)
+        @if($calls_per_day->calls->count() > 0)
             @include('partials.calls-table-card-header')
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -70,8 +70,7 @@
                             <th width="5%"></th>
                         </thead>
                         <tbody>
-
-                            @foreach($items['calls'] as $call)
+                            @foreach($calls_per_day->calls as $call)
                                 <tr>
                                     <td>{{ $call->company->name }}</td>
                                     <td>{{ $call->rating }}</td>

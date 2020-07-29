@@ -328,7 +328,7 @@ class QAccount
             $unrated_calls = $calls_in_day->where('quality_rating', 'N/A')->count();
             $average_rating = $calls_in_day->average('quality_rating');
 
-            return [
+            return (object)[
                 'date' => formatDisplayDate($date),
                 'calls' => $calls_in_day,
                 'sum' => $sum,
@@ -340,7 +340,6 @@ class QAccount
         });
 
         $sum = $calls->sum('amount_earned');
-
         return [
             'calls' => $parsed_calls,
             'sum' => $sum

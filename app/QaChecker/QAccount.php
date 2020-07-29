@@ -142,6 +142,12 @@ class QAccount
         return !empty($this->getAllCalls());
     }
 
+    /**
+     *  reload data from QA World with sending Notifications 
+     *
+     * @return 
+     */
+
     public function reloadWithNotifations()
     {
         $this->sendNotifications = true;

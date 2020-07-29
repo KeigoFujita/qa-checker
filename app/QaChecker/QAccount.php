@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use PHPHtmlParser\Dom;
 
@@ -74,19 +75,21 @@ class QAccount
     public function getCallsInWeek($week = 0, $owner = null)
     {
 
-
         if ($week > 0) {
             $this->from = $this->from->subWeeks($week);
             $this->to = $this->to->subWeeks($week);
         }
 
-        $from = $this->from->format('M d, Y');
-        $to = $this->to->format('M d, Y');
+        $from = $this->from;
+        $to = $this->to;
 
         $calls = collect([]);
         $all_calls = collect($this->getAllCalls());
-
-        $calls = $all_calls->whereBetween('completion_date', [$from, $to]);
+        $calls = $all_calls->filter(function ($call) use ($from, $to) {
+            $completion_date = Carbon::parse($call->completion_date, 'GMT+8');
+            // dump($completion_date->format('M d, Y') . " = ", $completion_date->gte($from) && $completion_date->lte($to));
+            return $completion_date->gte($from) && $completion_date->lte($to);
+        });
         $calls = $owner ? $calls->where('owner', $owner) : $calls;
         return $calls;
     }
@@ -109,17 +112,6 @@ class QAccount
         $calls = Storage::disk('public')->get('calls.json');
         return json_decode($calls);
     }
-
-
-    public function getDummyCalls()
-    {
-        $calls_exists = Storage::disk('public')->exists('dummy_calls.json');
-        if (!$calls_exists)  $this->reload();
-
-        $calls = Storage::disk('public')->get('dummy_calls.json');
-        return json_decode($calls, true);
-    }
-
 
     /**
      *  reload data from QA World
@@ -225,6 +217,7 @@ class QAccount
         } catch (Exception $e) {
             Log::error($e);
             Log::error("Can't make request to the QA Website");
+            Session::flash('error', "Can't make request to the QA Website");
             return "";
         }
     }
@@ -315,7 +308,6 @@ class QAccount
     {
 
         $calls = $this->selected_calls;
-
         $to = $this->to->eq(Carbon::parse('this week Sunday', 'GMT+8')) ? now('GMT+8') : $this->to;
 
         $dates = getDaysInBetween($this->from, $to);

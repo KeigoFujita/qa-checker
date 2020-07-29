@@ -165,6 +165,5 @@
             </div>
         @endif
     </div>
-    {{ -- --}}
 @endforeach
 @endsection

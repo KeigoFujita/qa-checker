@@ -165,53 +165,6 @@
             </div>
         @endif
     </div>
-
-@empty
-
-    <div class="row">
-        <div class="col-md-9">
-            <p class="display-5">Calls</p>
-        </div>
-        <div class="col-md-3">
-
-            <div class="h-100 pb-2 d-flex justify-content-end align-items-end">
-                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                    <a href="{{ route('calls.index') }}" type="button"
-                        class="btn btn-secondary btn-sm">Calls</a>
-                    <a href="{{ route('companies.index') }}" type="button"
-                        class="btn btn-outline-secondary btn-sm">Companies</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card mb-5">
-        <div class="card-header">
-            <div class="d-flex justify-content-end align-items-center h-1 cursor-pointer">
-                <a data-toggle="modal" data-target="#createModal">
-                    <svg width="1.2rem" height="1.2rem" viewBox="0 0 16 16" class="bi bi-plus-square"
-                        fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z" />
-                        <path fill-rule="evenodd"
-                            d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z" />
-                        <path fill-rule="evenodd"
-                            d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                    </svg>
-                </a>
-            </div>
-        </div>
-        <div class="card-body p-0">
-            <div style="height: 20rem" class="d-flex align-items-center justify-content-center">
-                <p class="mb-0">No calls recorded</p>
-            </div>
-        </div>
-    </div>
-
-@endforelse
-
-@endsection
-
-@section('modal')
-{{-- @include('calls.modals.create')
-@include('calls.modals.edit') --}}
+    {{ -- --}}
+@endforeach
 @endsection

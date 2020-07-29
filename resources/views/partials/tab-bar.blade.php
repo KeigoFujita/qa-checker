@@ -1,9 +1,9 @@
 <form action="{{ route('calls.index') }}" id="owner-form">
-    <div class="pb-5 d-flex justify-content-end align-items-end md-d-block">
-        <div class="form-inline mr-1 md-mr-0 md-mb-half">
+    <div class="pb-5 d-flex justify-content-end align-items-end">
+        <div class="form-inline mr-1">
             <div class="input-group input-group-sm">
                 <div class="input-group-prepend">
-                    <div class="input-group-text bg-secondary text-white md-w-5">Calls</div>
+                    <div class="input-group-text bg-secondary text-white">Calls</div>
                 </div>
 
                 <select name="week_ago" class="form-control form-control-sm" onchange="$('#owner-form').submit()">
@@ -18,8 +18,8 @@
         </div>
         <div class="form-inline">
             <div class="input-group input-group-sm">
-                <div class="input-group-prepend ">
-                    <div class="input-group-text bg-secondary text-white md-w-5">Owner</div>
+                <div class="input-group-prepend">
+                    <div class="input-group-text bg-secondary text-white">Owner</div>
                 </div>
 
                 <select name="account_id" class="form-control form-control-sm" onchange="$('#owner-form').submit()">

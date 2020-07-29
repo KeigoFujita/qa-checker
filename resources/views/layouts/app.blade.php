@@ -9,10 +9,13 @@
 
     <!-- Fonts -->
     <link href="" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        crossorigin="anonymous">
     {{-- <link rel="stylesheet" href="{{ asset('css/_libraries.css') }}">
     --}}
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('css/styles.css') }}"> --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/KeigoFujita/qa-checker/public/css/styles.css"
+        crossorigin="anonymous">
 </head>
 
 <body>
@@ -28,9 +31,9 @@
                                 <p class="card-title mb-0">
 
                                     @isset($sum)
-                                        Php. {{ convertToPeso($sum) }}
+                                    Php. {{ convertToPeso($sum) }}
                                     @else
-                                        Php. {{ convertToPeso($total_earnings) }}
+                                    Php. {{ convertToPeso($total_earnings) }}
                                     @endisset
 
                                 </p>
@@ -56,7 +59,7 @@
     </script>
 
     {{-- Custom Script --}}
-    <script src="{{ asset('js/test.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/gh/KeigoFujita/qa-checker/public/js/test.js" crossorigin="anonymous"></script>
 </body>
 
 </html>
